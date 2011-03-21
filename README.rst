@@ -67,7 +67,7 @@ installed. Here's how you'd write that::
 
 	apt.install('tmux')
 
-That's it! Running that bit of code will not install ``tmux``. Note
+That's it! Running that bit of code will now install ``tmux``. Note
 that ``pydebianadmin`` is just a completely generic utility library,
 and isn't tied to Troops in any way. That is, Troops deployments are
 just regular old Python. Now, how to get that to run on the desired
