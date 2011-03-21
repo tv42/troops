@@ -202,7 +202,7 @@ And ship them over to the remote machine::
 	git push ubuntu@shellbox-1:/var/lib/troops/repo/main.git master
 
 This will trigger a run, and the output of that will be shown to
-you. This let's you do push-style deploys fairly nicely.
+you. This lets you do push-style deploys fairly nicely.
 
 
 The pull deployment model
