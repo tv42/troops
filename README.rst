@@ -250,3 +250,63 @@ like this::
 	pip.main(['install', '-e', 'lxml'])
 	import lxml
 	# now it should work
+
+
+Coordinating multiple nodes
+===========================
+
+Let's say you're using one of those clouds that gives your nodes
+static-but-random IP addresses. How do we tell node A how to reach
+node B?
+
+Or, even more critically, on initial deploy B creates a private/public
+key pair. Or even just a plain old username/password. How do we
+transmit this data to A, with maximum trust: no eavesdroppers, no
+forgery.
+
+First off, we need to understand and accept that we will not have this
+information until B is up and running. Hence, we either need to delay
+deploying A until we have all the information, or we need to deploy it
+in some sort of degraded mode, where it will not depend on being able
+to reach B. Or in case there's one A and lots of B1, B2, etc machines,
+just not add Bn into A's configuration until Bn is up & ready.
+
+This is fairly easy to solve for architectures where there's a
+coordinating node that can communicate with both A and B. But Troops
+is designed to be minimal, and there's no need to build such a
+*centralization design smell* into Troops itself. Instead, we will
+provide you enough rope to to implement it yourself.
+
+Obviously, Troops itself got deployed somehow. This tends to take one
+of two forms: 1. an "image", or a "seeded install" that is given
+read-only information to consume, or 2. an SSH connection is used to
+customize a "base image". Either way, it's easy to arrange a shell
+accessible with an given SSH public key.
+
+We can use that SSH trust relationship to directly handle the
+exchange; a management node C can SSH to both B and A, and transmit
+the necessary information. For the fully automated case, this would
+need to be automated and triggered somehow by the creation of B (or
+A). For now, let's look at the simpler manual way.
+
+Let's say the deploy code for  B has::
+
+	import subprocess
+
+	subprocess.call([
+	        'ssh-keygen',
+	        '-N',  '',
+	        '-f', '/srv/foo/ssh',
+	        ])
+
+Now, after deploying B, on our comfy local machine we trigger all the
+deploys from, we can run::
+
+	scp user@B:/srv/foo/ssh.pub B.pub
+	scp B.pub user@A:/srv/foo/keys/B.pub
+
+And then trigger the Troops on A to notice that the key is there::
+
+	ssh user@A troops deploy
+
+(TODO: the above is a rambly, edit for clarity)
