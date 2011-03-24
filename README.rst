@@ -145,7 +145,7 @@ mechanism, we use Git for synchronizing changes. That also nicely
 solves the problem of concurrent edits for us.
 
 To make things more concrete: say you have a virtual machine with a
-base Ubuntu install, a user who can log in with SSH keys, with
+base Ubuntu install, and a user who can log in with SSH keys, with
 ``sudo`` access. Let's call it ``ubuntu@shellbox-1.example.com``.
 
 Install ``troops`` on ``shellbox-1`` (TODO details, but it's just the
