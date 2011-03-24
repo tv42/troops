@@ -228,3 +228,25 @@ Troops will try to fetch from *all* the defined remotes (when we said
 no centralization, we meant it), and will update the local branch if
 and only if a pure fast-forward merge can be done. Whenever the local
 branch gets updated, Troops will run the deploy script.
+
+
+Using Python C extensions
+=========================
+
+If you want to use Python C extensions that are not in the standard
+library, and that depend on specific C libraries to build, you need to
+make sure the right platform packages are installed before `Pip` can
+install the package. Hence, ``requirements.txt`` is not sufficient.
+
+For example ``lxml`` is a C extension that needs ``libxml2-dev`` and
+``libxslt1-dev`` to compile. To do this, you need to write something
+like this::
+
+	import pip
+
+	from pydebianadmin import apt
+
+	apt.install('libxml2-dev', 'libxslt1-dev')
+	pip.main(['install', '-e', 'lxml'])
+	import lxml
+	# now it should work
