@@ -22,6 +22,9 @@ attempt to build something different.
 
     install_requires=[
         'setuptools',
+        ],
+
+    tests_require=[
         'nose >=1.0.0',
         ],
 
