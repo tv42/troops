@@ -94,7 +94,7 @@ For example, if you want to use hostnames::
 	import troops
 
 	if troops.hostname().startswith('shellbox-'):
-	    troops.activate_role('interactive')
+	    troops.roles.add('interactive')
 
 Here, ``troops.hostname()`` is a convenience wrapper around
 ``socket.gethostname()`` that tries to get the fully qualified name.
