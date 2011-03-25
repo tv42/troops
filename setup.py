@@ -22,10 +22,22 @@ attempt to build something different.
 
     install_requires=[
         'setuptools',
+        'argparse >=1.1',
         ],
 
     tests_require=[
         'nose >=1.0.0',
+        'fudge >=1.0.3',
         ],
+
+    entry_points={
+        'console_scripts': [
+            'troops = troops.cli.main:main',
+            ],
+
+        'troops.cli': [
+            'deploy = troops.cli.deploy:main',
+            ],
+        },
 
     )
