@@ -1,1 +1,3 @@
 argparse >=1.1
+pip >=0.7.2
+virtualenv >=1.4.9

@@ -197,7 +197,11 @@ Next up, commit the above files to Git::
 	git add deploy.py requirements.txt
 	git commit -m 'Install tmux on interactive boxes.'
 
-And ship them over to the remote machine::
+You can now run the deploy locally::
+
+	troops deploy --repository=.
+
+Or ship them over to the remote machine and trigger a deploy there::
 
 	git push ubuntu@shellbox-1:/var/lib/troops/repo/main.git master
 
