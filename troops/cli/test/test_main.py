@@ -49,6 +49,7 @@ usage: troops [-h] {deploy} ...
 troops: error: too few arguments
 """)
 
+
 @fudge.patch('sys.stdout', 'sys.stderr', 'sys.exit')
 def test_bad_args(fake_stdout, fake_stderr, fake_exit):
     err = StringIO()
