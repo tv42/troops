@@ -228,10 +228,19 @@ To tell ``shellbox-1`` where to fetch from, run::
 
 Replace ``NAME`` with whatever you consider descriptive.
 
-Troops will try to fetch from *all* the defined remotes (when we said
-no centralization, we meant it), and will update the local branch if
-and only if a pure fast-forward merge can be done. Whenever the local
-branch gets updated, Troops will run the deploy script.
+Now, we can tell Troops to try to fetch from *all* the defined remotes
+(when we said no centralization, we meant it), and any remote master
+branch with fast-forwardable [#ff]_ changes will be deployed. The
+local branch will be updated once the deploy succeeds, and only then;
+this makes Troops retry failed deploys until they work.
+
+	ssh ubuntu@shellbox-1 troops pull \
+	  --repository=/var/lib/troops/repo/main.git
+
+.. [ff] fast-forwarding is a Git term that means there is no
+   divergence in the two branches, only the remote branch has
+   new commits; this guarantees there will be automated merging,
+   and especially no merge conflicts
 
 
 Using Python C extensions

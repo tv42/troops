@@ -9,84 +9,14 @@ from cStringIO import StringIO
 
 from troops.cli.main import main
 
-from troops.test.util import maketemp
+from troops.test.util import (
+    fast_import,
+    maketemp,
+    )
 
 
 class FakeExit(Exception):
     pass
-
-
-def fast_import(
-    repo,
-    commits,
-    ref=None,
-    ):
-    """
-    Create an initial commit.
-    """
-    if ref is None:
-        ref = 'refs/heads/master'
-    child = subprocess.Popen(
-        args=[
-            'git',
-            '--git-dir=%s' % repo,
-            'fast-import',
-            '--quiet',
-            ],
-        stdin=subprocess.PIPE,
-        close_fds=True,
-        )
-
-    for commit in commits:
-        files = list(commit['files'])
-        for index, filedata in enumerate(files):
-            child.stdin.write("""\
-blob
-mark :%(mark)d
-data %(len)d
-%(content)s
-""" % dict(
-                mark=index+1,
-                len=len(filedata['content']),
-                content=filedata['content'],
-                ))
-        child.stdin.write("""\
-commit %(ref)s
-author %(author)s %(author_time)s
-committer %(committer)s %(commit_time)s
-data %(commit_msg_len)d
-%(commit_msg)s
-""" % dict(
-                ref=ref,
-                author=commit.get('author', commit['committer']),
-                author_time=commit.get('author_time', commit['commit_time']),
-                committer=commit['committer'],
-                commit_time=commit['commit_time'],
-                commit_msg_len=len(commit['message']),
-                commit_msg=commit['message'],
-                ))
-        parent = commit.get('parent')
-        if parent is not None:
-            assert not parent.startswith(':')
-            child.stdin.write("""\
-from %(parent)s
-""" % dict(
-                    parent=parent,
-                    ))
-        for index, filedata in enumerate(files):
-            child.stdin.write(
-                'M %(mode)s :%(index)d %(path)s\n' % dict(
-                    mode=filedata.get('mode', '100644'),
-                    index=index+1,
-                    path=filedata['path'],
-                    ),
-                )
-
-    child.stdin.close()
-    returncode = child.wait()
-    if returncode != 0:
-        raise RuntimeError(
-            'git fast-import failed', 'exit status %d' % returncode)
 
 
 @fudge.patch('sys.stdout', 'sys.stderr', 'sys.exit')
