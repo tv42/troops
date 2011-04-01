@@ -4,31 +4,29 @@ import os
 import re
 import subprocess
 
-from nose.tools import eq_ as eq, assert_raises
+from nose.tools import eq_ as eq
 from cStringIO import StringIO
 
 from troops.cli.main import main
 
 from troops.test.util import (
+    assert_raises,
     fast_import,
     maketemp,
     )
 
 
-class FakeExit(Exception):
-    pass
-
-
-@fudge.patch('sys.stdout', 'sys.stderr', 'sys.exit')
-def test_help(fake_stdout, fake_stderr, fake_exit):
+@fudge.patch('sys.stdout', 'sys.stderr')
+def test_help(fake_stdout, fake_stderr):
     out = StringIO()
     fake_stdout.expects('write').calls(out.write)
-    fake_exit.expects_call().with_args(0).raises(FakeExit)
-    assert_raises(
-        FakeExit,
+    e = assert_raises(
+        SystemExit,
         main,
         args=['deploy', '--help'],
         )
+    eq(e.code, 0)
+
     got = out.getvalue()
     eq(got, """\
 usage: troops deploy [OPTS]
@@ -43,8 +41,8 @@ optional arguments:
        'Unexpected output:\n'+got)
 
 
-@fudge.patch('sys.stdout', 'sys.stderr', 'sys.exit')
-def test_simple(fake_stdout, fake_stderr, fake_exit):
+@fudge.patch('sys.stdout', 'sys.stderr')
+def test_simple(fake_stdout, fake_stderr):
     tmp = maketemp()
     repo = os.path.join(tmp, 'repo')
     os.mkdir(repo)

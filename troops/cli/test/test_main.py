@@ -1,25 +1,21 @@
 import fudge
 
-from nose.tools import eq_ as eq, assert_raises
+from nose.tools import eq_ as eq
 from cStringIO import StringIO
 
 from troops.cli.main import main
+from troops.test.util import assert_raises
 
-
-class FakeExit(Exception):
-    pass
-
-
-@fudge.patch('sys.stdout', 'sys.stderr', 'sys.exit')
-def test_help(fake_stdout, fake_stderr, fake_exit):
+@fudge.patch('sys.stdout', 'sys.stderr')
+def test_help(fake_stdout, fake_stderr):
     out = StringIO()
     fake_stdout.expects('write').calls(out.write)
-    fake_exit.expects_call().with_args(0).raises(FakeExit)
-    assert_raises(
-        FakeExit,
+    e = assert_raises(
+        SystemExit,
         main,
         args=['--help'],
         )
+    eq(e.code, 0)
     eq(out.getvalue(), """\
 usage: troops [-h] {deploy} ...
 
@@ -34,32 +30,32 @@ commands:
 """)
 
 
-@fudge.patch('sys.stdout', 'sys.stderr', 'sys.exit')
-def test_no_args(fake_stdout, fake_stderr, fake_exit):
+@fudge.patch('sys.stdout', 'sys.stderr')
+def test_no_args(fake_stdout, fake_stderr):
     err = StringIO()
     fake_stderr.expects('write').calls(err.write)
-    fake_exit.expects_call().with_args(2).raises(FakeExit)
-    assert_raises(
-        FakeExit,
+    e = assert_raises(
+        SystemExit,
         main,
         args=[],
         )
+    eq(e.code, 2)
     eq(err.getvalue(), """\
 usage: troops [-h] {deploy} ...
 troops: error: too few arguments
 """)
 
 
-@fudge.patch('sys.stdout', 'sys.stderr', 'sys.exit')
-def test_bad_args(fake_stdout, fake_stderr, fake_exit):
+@fudge.patch('sys.stdout', 'sys.stderr')
+def test_bad_args(fake_stdout, fake_stderr):
     err = StringIO()
     fake_stderr.expects('write').calls(err.write)
-    fake_exit.expects_call().with_args(2).raises(FakeExit)
-    assert_raises(
-        FakeExit,
+    e = assert_raises(
+        SystemExit,
         main,
         args=['bork'],
         )
+    eq(e.code, 2)
     eq(err.getvalue(), """\
 usage: troops [-h] {deploy} ...
 troops: error: invalid choice: 'bork' (choose from 'deploy')
