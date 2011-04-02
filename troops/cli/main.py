@@ -11,6 +11,7 @@ def main(args=None):
         )
     subparsers = parser.add_subparsers(
         title='commands',
+        metavar='COMMAND',
         )
 
     for entry_point in pkg_resources.iter_entry_points('troops.cli'):

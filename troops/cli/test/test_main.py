@@ -18,7 +18,7 @@ def test_help(fake_stdout, fake_stderr):
     eq(e.code, 0)
     got = out.getvalue()
     eq(got, """\
-usage: troops [-h] {deploy} ...
+usage: troops [-h] COMMAND ...
 
 Software deployment tool
 
@@ -26,7 +26,7 @@ optional arguments:
   -h, --help  show this help message and exit
 
 commands:
-  {deploy}
+  COMMAND
     deploy    Run the latest deployment script
 """,
        'Unexpected output:\n'+got)
@@ -44,7 +44,7 @@ def test_no_args(fake_stdout, fake_stderr):
     eq(e.code, 2)
     got = err.getvalue()
     eq(got, """\
-usage: troops [-h] {deploy} ...
+usage: troops [-h] COMMAND ...
 troops: error: too few arguments
 """,
        'Unexpected output:\n'+got)
@@ -62,7 +62,7 @@ def test_bad_args(fake_stdout, fake_stderr):
     eq(e.code, 2)
     got = err.getvalue()
     eq(got, """\
-usage: troops [-h] {deploy} ...
-troops: error: invalid choice: 'bork' (choose from 'deploy')
+usage: troops [-h] COMMAND ...
+troops: error: argument COMMAND: invalid choice: 'bork' (choose from 'deploy')
 """,
        'Unexpected output:\n'+got)
