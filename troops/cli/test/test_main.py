@@ -16,7 +16,8 @@ def test_help(fake_stdout, fake_stderr):
         args=['--help'],
         )
     eq(e.code, 0)
-    eq(out.getvalue(), """\
+    got = out.getvalue()
+    eq(got, """\
 usage: troops [-h] {deploy} ...
 
 Software deployment tool
@@ -27,7 +28,8 @@ optional arguments:
 commands:
   {deploy}
     deploy    Run the latest deployment script
-""")
+""",
+       'Unexpected output:\n'+got)
 
 
 @fudge.patch('sys.stdout', 'sys.stderr')
@@ -40,10 +42,12 @@ def test_no_args(fake_stdout, fake_stderr):
         args=[],
         )
     eq(e.code, 2)
-    eq(err.getvalue(), """\
+    got = err.getvalue()
+    eq(got, """\
 usage: troops [-h] {deploy} ...
 troops: error: too few arguments
-""")
+""",
+       'Unexpected output:\n'+got)
 
 
 @fudge.patch('sys.stdout', 'sys.stderr')
@@ -56,7 +60,9 @@ def test_bad_args(fake_stdout, fake_stderr):
         args=['bork'],
         )
     eq(e.code, 2)
-    eq(err.getvalue(), """\
+    got = err.getvalue()
+    eq(got, """\
 usage: troops [-h] {deploy} ...
 troops: error: invalid choice: 'bork' (choose from 'deploy')
-""")
+""",
+       'Unexpected output:\n'+got)
