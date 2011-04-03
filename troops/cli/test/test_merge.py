@@ -160,3 +160,86 @@ print "fakedeploy2 end"
     with file(flag) as f:
         got = f.read()
     eq(got, 'thud')
+
+
+@fudge.patch('sys.stdout', 'sys.stderr')
+def test_uptodate(fake_stdout, fake_stderr):
+    tmp = maketemp()
+    repo = os.path.join(tmp, 'repo')
+    os.mkdir(repo)
+    scratch = os.path.join(tmp, 'scratch')
+    os.mkdir(scratch)
+    flag = os.path.join(tmp, 'flag')
+    subprocess.check_call(
+        args=[
+            'git',
+            '--git-dir={0}'.format(repo),
+            'init',
+            '--quiet',
+            '--bare',
+            ],
+        )
+    fast_import(
+        repo=repo,
+        commits=[
+            dict(
+                message='Initial import.',
+                committer='John Doe <jdoe@example.com>',
+                commit_time='1216235872 +0300',
+                files=[
+                    dict(
+                        path='requirements.txt',
+                        content="""\
+# pip complains if this file is left empty, so say something we know
+# is easily accessible
+pip
+""",
+                        ),
+                    dict(
+                        path='deploy.py',
+                        content="""\
+import json
+import os
+print "fakedeploy start"
+print json.dumps(dict(cwd=os.getcwd()))
+with file(FLAGPATH, "a") as f:
+    f.write('xyzzy')
+print "fakedeploy end"
+""".replace('FLAGPATH', repr(flag)),
+                        ),
+                    ],
+                ),
+            ],
+        )
+    # cause remote to have something new for us
+    subprocess.check_call(
+        args=[
+            'git',
+            '--git-dir={0}'.format(repo),
+            'update-ref',
+            'refs/remotes/origin/master',
+            'HEAD',
+            ],
+        )
+    subprocess.check_call(
+        args=[
+            'git',
+            '--git-dir={0}'.format(repo),
+            'symbolic-ref',
+            'refs/remotes/origin/HEAD',
+            'refs/remotes/origin/master',
+            ],
+        )
+    out = StringIO()
+    fake_stdout.provides('write').calls(out.write)
+    assert not os.path.exists(flag)
+    main(
+        args=[
+            'merge',
+            '--repository', repo,
+            '--temp', scratch,
+            ],
+        )
+    got = out.getvalue().splitlines()
+    eq(got, [])
+    assert not os.path.exists(flag)
