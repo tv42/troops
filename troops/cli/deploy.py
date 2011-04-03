@@ -5,28 +5,54 @@ import sys
 import tempfile
 
 
-def run(args):
+def deploy(temp, repository, rev=None):
     scratch = tempfile.mkdtemp(
         prefix='troops-',
-        dir=args.temp,
+        dir=temp,
         )
     try:
+        source = os.path.join(scratch, 'source')
+        os.mkdir(source)
         subprocess.check_call(
             args=[
                 'git',
-                'clone',
+                'init',
                 '--quiet',
-                '-l',
-                '-s',
+                ],
+            cwd=source,
+            env=None,
+            )
+        subprocess.check_call(
+            args=[
+                'git',
+                'fetch',
+                '--quiet',
+                '--update-head-ok',
                 '--',
                 # avoid problems with ":" in path; note this syntax
                 # can still do relative paths
-                'file://{0}'.format(args.repository),
-                'source',
+                'file://{0}'.format(repository),
+                '+refs/heads/*:refs/heads/*',
+                '+refs/remotes/*:refs/remotes/*',
                 ],
-            cwd=scratch,
+            cwd=source,
             env=None,
             )
+        if rev is None:
+            rev = 'HEAD'
+        subprocess.check_call(
+            args=[
+                'git',
+                'reset',
+                '--hard',
+                '--quiet',
+                rev,
+                '--',
+                ],
+            cwd=source,
+            env=None,
+            )
+
         venv = os.path.join(scratch, 'virtualenv')
 
         subprocess.check_call(
@@ -88,6 +114,13 @@ def run(args):
 
     finally:
         shutil.rmtree(scratch)
+
+
+def run(args):
+    deploy(
+        temp=args.temp,
+        repository=args.repository,
+        )
 
 
 def main(parser):
