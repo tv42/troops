@@ -37,6 +37,7 @@ attempt to build something different.
 
         'troops.cli': [
             'deploy = troops.cli.deploy:main',
+            'merge = troops.cli.merge:main',
             ],
         },
 
