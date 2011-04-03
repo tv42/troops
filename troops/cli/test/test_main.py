@@ -27,8 +27,9 @@ optional arguments:
 
 commands:
   COMMAND
-    merge     Deploy any changes in remote branches
+    pull      Fetch and deploy any changes in remote repositories
     deploy    Run the latest deployment script
+    merge     Deploy any changes in remote branches
 """,
        'Unexpected output:\n'+got)
 
@@ -64,6 +65,6 @@ def test_bad_args(fake_stdout, fake_stderr):
     got = err.getvalue()
     eq(got, """\
 usage: troops [-h] COMMAND ...
-troops: error: argument COMMAND: invalid choice: 'bork' (choose from 'merge', 'deploy')
+troops: error: argument COMMAND: invalid choice: 'bork' (choose from 'pull', 'merge', 'deploy')
 """,
        'Unexpected output:\n'+got)
