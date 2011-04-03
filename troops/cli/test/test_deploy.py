@@ -112,5 +112,6 @@ print "fakedeploy end"
     cwd = got.pop('cwd')
     (head, tail) = os.path.split(cwd)
     eq(head, scratch)
-    assert re.match(r'^troops-[a-zA-Z0-9]{6,}$', tail)
+    assert re.match(r'^troops-[a-zA-Z0-9_]{6,}$', tail), \
+        "Odd cwd for deploy: {path!r}".format(path=cwd)
     eq(got, {})
