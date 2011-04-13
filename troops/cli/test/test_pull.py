@@ -69,9 +69,7 @@ def test_simple(fake_stdout, fake_stderr):
                     dict(
                         path='requirements.txt',
                         content="""\
-# pip complains if this file is left empty, so say something we know
-# is easily accessible
-pip
+# dummy
 """,
                         ),
                     dict(

@@ -77,6 +77,9 @@ def deploy(temp, repository, rev=None):
                 os.path.join(venv, 'bin', 'pip'),
                 '--quiet',
                 'install',
+                # pip complains if the requirements file is empty, so
+                # always give it something harmless to install: itself
+                'pip',
                 '-r', os.path.join(scratch, 'source', 'requirements.txt'),
                 ],
             cwd=scratch,
