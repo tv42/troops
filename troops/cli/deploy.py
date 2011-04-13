@@ -154,11 +154,14 @@ def main(parser):
         metavar='DIR',
         help='location of the git repository',
         # TODO this is meant to be temporary, until we have logic for
-        # /var/tmp/troops
+        # /var/lib/troops
         required=True,
         )
     parser.add_argument(
         '--temp',
         metavar='DIR',
         help='directory to store temporary files in',
+        # TODO this is meant to be temporary, until we have logic for
+        # /var/tmp/troops
+        required=True,
         )
