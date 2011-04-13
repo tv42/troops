@@ -19,13 +19,16 @@ def deploy(temp, repository, rev=None):
                 'git',
                 'init',
                 '--quiet',
+                '--',
+                source,
                 ],
-            cwd=source,
             env=None,
             )
         subprocess.check_call(
             args=[
                 'git',
+                '--git-dir={source}/.git'.format(source=source),
+                '--work-tree=..',
                 'fetch',
                 '--quiet',
                 '--update-head-ok',
@@ -36,7 +39,6 @@ def deploy(temp, repository, rev=None):
                 '+refs/heads/*:refs/heads/*',
                 '+refs/remotes/*:refs/remotes/*',
                 ],
-            cwd=source,
             env=None,
             )
         if rev is None:
@@ -44,17 +46,16 @@ def deploy(temp, repository, rev=None):
         subprocess.check_call(
             args=[
                 'git',
+                '--git-dir={source}/.git'.format(source=source),
+                '--work-tree={source}'.format(source=source),
                 'reset',
                 '--hard',
                 '--quiet',
                 rev,
                 '--',
                 ],
-            cwd=source,
             env=None,
             )
-
-        venv = os.path.join(scratch, 'virtualenv')
 
         subprocess.check_call(
             args=[
@@ -67,7 +68,7 @@ def deploy(temp, repository, rev=None):
                 '--distribute',
                 '--quiet',
                 '--',
-                venv,
+                'virtualenv',
                 ],
             cwd=scratch,
             env=None,
@@ -75,13 +76,13 @@ def deploy(temp, repository, rev=None):
 
         subprocess.check_call(
             args=[
-                os.path.join(venv, 'bin', 'pip'),
+                './virtualenv/bin/pip',
                 '--quiet',
                 'install',
                 # pip complains if the requirements file is empty, so
                 # always give it something harmless to install: itself
                 'pip',
-                '-r', os.path.join(scratch, 'source', 'requirements.txt'),
+                '-r', 'source/requirements.txt',
                 ],
             cwd=scratch,
             env=None,
@@ -95,7 +96,8 @@ def deploy(temp, repository, rev=None):
         os.symlink(
             os.path.dirname(troops.__file__),
             os.path.join(
-                venv,
+                scratch,
+                'virtualenv',
                 'lib',
                 'python{ver}'.format(ver=sys.version[:3]),
                 'site-packages',
@@ -106,7 +108,7 @@ def deploy(temp, repository, rev=None):
         with file('/dev/null') as devnull:
             proc = subprocess.Popen(
                 args=[
-                    os.path.join(venv, 'bin', 'python'),
+                    './virtualenv/bin/python',
                     '--',
                     os.path.join('source', 'deploy.py'),
                     ],
