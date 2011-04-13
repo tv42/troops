@@ -46,6 +46,16 @@ def run(args):
         repository=args.repository,
         rev=remote,
         )
+    subprocess.check_call(
+        args=[
+            'git',
+            '--git-dir={0}'.format(args.repository),
+            'update-ref',
+            'HEAD',
+            remote,
+            head,
+            ],
+        )
 
 
 def main(parser):
