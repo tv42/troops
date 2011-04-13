@@ -4,6 +4,7 @@ import subprocess
 import sys
 import tempfile
 
+import troops
 
 def deploy(temp, repository, rev=None):
     scratch = tempfile.mkdtemp(
@@ -84,6 +85,22 @@ def deploy(temp, repository, rev=None):
                 ],
             cwd=scratch,
             env=None,
+            )
+
+        # we need to install troops in the virtualenv, to provide the
+        # .role etc deploy-time functionality. as we don't necessarily
+        # have a source package or an egg around, we can't pip install
+        # it for real. instead, cheat and just symlink the modules
+        # that are needed.
+        os.symlink(
+            os.path.dirname(troops.__file__),
+            os.path.join(
+                venv,
+                'lib',
+                'python{ver}'.format(ver=sys.version[:3]),
+                'site-packages',
+                'troops',
+                ),
             )
 
         with file('/dev/null') as devnull:
