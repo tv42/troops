@@ -76,6 +76,9 @@ def deploy(temp, repository, rev=None):
 
         subprocess.check_call(
             args=[
+                # call python explicitly to avoid hitting shebang line
+                # maximum length
+                './virtualenv/bin/python',
                 './virtualenv/bin/pip',
                 '--quiet',
                 'install',
