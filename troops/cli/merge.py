@@ -35,6 +35,12 @@ def run(args):
         repo=args.repository,
         rev='refs/remotes/origin/HEAD',
         )
+    if remote is None:
+        # default to branch "master" on remote
+        remote = rev_parse(
+            repo=args.repository,
+            rev='refs/remotes/origin/master',
+            )
     assert remote is not None
     if head is None:
         # we have no local branch -> any remote branch is welcome
