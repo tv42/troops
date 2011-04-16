@@ -31,21 +31,26 @@ def rev_parse(repo, rev):
 
 def run(args):
     head = rev_parse(repo=args.repository, rev='HEAD')
-    assert head is not None
     remote = rev_parse(
         repo=args.repository,
         rev='refs/remotes/origin/HEAD',
         )
     assert remote is not None
-    if remote == head:
-        # no action needed
-        return
+    if head is None:
+        # we have no local branch -> any remote branch is welcome
+        pass
+    else:
+        if remote == head:
+            # no action needed
+            return
     # TODO ff only
     deploy.deploy(
         temp=args.temp,
         repository=args.repository,
         rev=remote,
         )
+    if head is None:
+        head = 40*'0'
     subprocess.check_call(
         args=[
             'git',
