@@ -1,3 +1,4 @@
+import logging
 import os
 import shutil
 import subprocess
@@ -6,6 +7,7 @@ import tempfile
 
 from . import deploy
 
+log = logging.getLogger(__name__)
 
 def rev_parse(repo, rev):
     process = subprocess.Popen(

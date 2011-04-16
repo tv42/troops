@@ -1,3 +1,4 @@
+import logging
 import os
 import shutil
 import subprocess
@@ -5,6 +6,8 @@ import sys
 import tempfile
 
 import troops
+
+log = logging.getLogger(__name__)
 
 def deploy(temp, repository, rev=None):
     scratch = tempfile.mkdtemp(
