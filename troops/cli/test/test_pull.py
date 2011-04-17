@@ -1,4 +1,5 @@
 import fudge
+import logging
 import json
 import os
 import re
@@ -15,6 +16,8 @@ from troops.test.util import (
     maketemp,
     current_dir,
     )
+
+log = logging.getLogger(__name__)
 
 @fudge.patch('sys.stdout', 'sys.stderr')
 def test_help(fake_stdout, fake_stderr):

@@ -1,10 +1,13 @@
 import fudge
+import logging
 
 from nose.tools import eq_ as eq
 from cStringIO import StringIO
 
 from troops.cli.main import main
 from troops.test.util import assert_raises
+
+log = logging.getLogger(__name__)
 
 @fudge.patch('sys.stdout', 'sys.stderr')
 def test_help(fake_stdout, fake_stderr):
