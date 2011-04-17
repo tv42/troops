@@ -31,14 +31,15 @@ def deploy(temp, repository, rev=None):
             args=[
                 'git',
                 '--git-dir={source}/.git'.format(source=source),
-                '--work-tree=..',
                 'fetch',
                 '--quiet',
                 '--update-head-ok',
                 '--',
-                # avoid problems with ":" in path; note this syntax
-                # can still do relative paths
-                'file://{0}'.format(repository),
+                # this will fail if the path has ":" in it; i have no
+                # good workaround for this; git's file:// syntax
+                # cannot cope with relative pathnames that have
+                # slashes in them
+                repository,
                 '+refs/heads/*:refs/heads/*',
                 '+refs/remotes/*:refs/remotes/*',
                 ],

@@ -1,3 +1,4 @@
+import contextlib
 import errno
 import os
 import shutil
@@ -157,3 +158,15 @@ from %(parent)s
     if returncode != 0:
         raise RuntimeError(
             'git fast-import failed', 'exit status %d' % returncode)
+
+@contextlib.contextmanager
+def current_dir(path):
+  old = os.open('.', os.O_DIRECTORY)
+  try:
+      try:
+          os.chdir(path)
+          yield
+      finally:
+          os.fchdir(old)
+  finally:
+      os.close(old)
